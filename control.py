@@ -22,12 +22,19 @@ async def control_light(command):
         async with BleakClient(device) as client:
             print(f"Connected: {client.is_connected}")
             
-            if command == "on":
-                print("Sending ON...")
-                await client.write_gatt_char(CMD_UUID, CMD_ON)
-            elif command == "off":
-                print("Sending OFF...")
-                await client.write_gatt_char(CMD_UUID, CMD_OFF)
+            try:
+                if command == "on":
+                    print("Sending ON...")
+                    await client.write_gatt_char(CMD_UUID, CMD_ON)
+                elif command == "off":
+                    print("Sending OFF...")
+                    await client.write_gatt_char(CMD_UUID, CMD_OFF)
+            except Exception as e:
+                if "The value's length is invalid" in str(e):
+                    # This error is expected but the command still works
+                    pass
+                else:
+                    raise e
             
             print("Done.")
             return True

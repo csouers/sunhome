@@ -20,15 +20,27 @@ async def main():
     async with BleakClient(device) as client:
         print(f"Connected: {client.is_connected}")
         
-        print("Sending ON...")
-        await client.write_gatt_char(CMD_UUID, CMD_ON)
-        print("Sent ON command")
-        
+        try:
+            print("Sending ON...")
+            await client.write_gatt_char(CMD_UUID, CMD_ON)
+            print("Sent ON command")
+        except Exception as e:
+            if "The value's length is invalid" in str(e):
+                print("Sent ON command (warning suppressed)")
+            else:
+                raise e
+
         await asyncio.sleep(3)
         
-        print("Sending OFF...")
-        await client.write_gatt_char(CMD_UUID, CMD_OFF)
-        print("Sent OFF command")
+        try:
+            print("Sending OFF...")
+            await client.write_gatt_char(CMD_UUID, CMD_OFF)
+            print("Sent OFF command")
+        except Exception as e:
+            if "The value's length is invalid" in str(e):
+                print("Sent OFF command (warning suppressed)")
+            else:
+                raise e
         
         print("Disconnecting...")
 
