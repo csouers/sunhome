@@ -10,7 +10,7 @@ NOTIFY_UUID = "0000ffd4-0000-1000-8000-00805f9b34fb"
 CMD_ON = bytes.fromhex("CC 23 33")
 CMD_OFF = bytes.fromhex("CC 24 33")
 
-async def control_light(command):
+async def control_light(command, rgb_values=None):
     print(f"Scanning for {TARGET_NAME}...")
     device = await BleakScanner.find_device_by_name(TARGET_NAME)
     
@@ -48,6 +48,12 @@ async def control_light(command):
                 elif command == "off":
                     print("Sending OFF...")
                     await client.write_gatt_char(CMD_UUID, CMD_OFF)
+                elif command == "rgb" and rgb_values:
+                    r, g, b = rgb_values
+                    print(f"Sending RGB ({r}, {g}, {b})...")
+                    # Packet structure: 56 R G B F0 00 00 64 00 AA
+                    payload = bytes([0x56, r, g, b, 0xF0, 0x00, 0x00, 0x64, 0x00, 0xAA])
+                    await client.write_gatt_char(CMD_UUID, payload)
             except Exception as e:
                 if "The value's length is invalid" in str(e):
                     # This error is expected but the command still works
@@ -55,11 +61,15 @@ async def control_light(command):
                 else:
                     raise e
             
-            # Wait for verification
-            try:
-                await asyncio.wait_for(state_verified.wait(), timeout=3.0)
-            except asyncio.TimeoutError:
-                print("Warning: No confirmation notification received.")
+            # Wait for verification (only for ON/OFF for now)
+            if command in ["on", "off"]:
+                try:
+                    await asyncio.wait_for(state_verified.wait(), timeout=3.0)
+                except asyncio.TimeoutError:
+                    print("Warning: No confirmation notification received.")
+            elif command == "rgb":
+                 # Give it a moment to send
+                 await asyncio.sleep(0.5)
             
             return True
     except Exception as e:
@@ -104,8 +114,8 @@ async def listen_mode():
         print(f"Error: {e}")
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python control.py [on|off|listen]")
+    if len(sys.argv) < 2:
+        print("Usage: python control.py [on|off|listen|rgb <r> <g> <b>]")
         sys.exit(1)
         
     cmd = sys.argv[1].lower()
@@ -114,8 +124,22 @@ def main():
         asyncio.run(listen_mode())
     elif cmd in ["on", "off"]:
         asyncio.run(control_light(cmd))
+    elif cmd == "rgb":
+        if len(sys.argv) != 5:
+            print("Usage: python control.py rgb <r> <g> <b>")
+            sys.exit(1)
+        try:
+            r = int(sys.argv[2])
+            g = int(sys.argv[3])
+            b = int(sys.argv[4])
+            if not all(0 <= val <= 255 for val in [r, g, b]):
+                raise ValueError
+            asyncio.run(control_light("rgb", (r, g, b)))
+        except ValueError:
+            print("Error: R, G, B values must be integers between 0 and 255.")
+            sys.exit(1)
     else:
-        print("Usage: python control.py [on|off|listen]")
+        print("Usage: python control.py [on|off|listen|rgb <r> <g> <b>]")
         sys.exit(1)
 
 if __name__ == "__main__":

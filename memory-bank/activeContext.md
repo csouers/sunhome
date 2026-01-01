@@ -6,6 +6,7 @@ Initial setup and reverse engineering of the White LED On/Off command.
 ## Recent Changes
 - Initialized Memory Bank.
 - Identified target device: `iStar&5B13` (`2B:80:03:E4:5B:13`).
+- Added RGB control support to `control.py`.
 
 ## Next Steps
 [Completed] Capture and analyze On/Off packets.
@@ -14,6 +15,8 @@ Initial setup and reverse engineering of the White LED On/Off command.
 [Completed] Implement feedback verification via Notifications (`FFD4`).
 [Completed] Add `listen` mode to monitor manual changes.
 [Completed] Document usage in README.
+[Completed] Add RGB color control.
+[Pending] Verify RGB control.
 
 ## Active Decisions
 - Using `bleak` for BLE interface.

@@ -12,4 +12,5 @@
 - [x] Connect via Python.
 - [x] Capture On/Off packets.
 - [x] Implement toggle control.
+- [x] Implement RGB control.
 - [ ] Create CLI tool for easy control.

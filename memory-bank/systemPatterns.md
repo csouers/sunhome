@@ -11,6 +11,15 @@
     - **Commands**:
         - `CC 23 33`: ON
         - `CC 24 33`: OFF
+        - `56 R G B F0 00 00 64 00 AA`: Set RGB Color (Length 10 bytes).
+          - `R`, `G`, `B`: 0-255 (00-FF).
+          - `F0` (Byte 4): RGB Mode.
+          - `0F` (Byte 4): White Mode.
+          - `FF` (Byte 5): Warm White (00 to FF).
+          - `FF` (Byte 6): Cool Mode (00 to FF).
+          - `64` (Byte 7): Brightness (0x03-0x64).
+          - `00` (Byte 8): Fixed.
+          - `AA` (Byte 9): Fixed.
 
 ## Design Patterns
 - **Discovery**: Locate device by MAC.
