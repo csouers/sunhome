@@ -66,12 +66,57 @@ async def control_light(command):
         print(f"Error: {e}")
         return False
 
+async def listen_mode():
+    print(f"Scanning for {TARGET_NAME}...")
+    device = await BleakScanner.find_device_by_name(TARGET_NAME)
+    
+    if not device:
+        print(f"Error: {TARGET_NAME} not found.")
+        return
+        
+    print(f"Connecting to {device.address}...")
+    try:
+        async with BleakClient(device) as client:
+            print(f"Connected. Listening for state changes... (Ctrl+C to exit)")
+            
+            def notification_handler(sender, data):
+                if len(data) >= 3:
+                    state_byte = data[2]
+                    if state_byte == 0x23:
+                        print(f"State Change: ON (Raw: {data.hex()})")
+                    elif state_byte == 0x24:
+                        print(f"State Change: OFF (Raw: {data.hex()})")
+                    else:
+                        print(f"Notification: {data.hex()}")
+                else:
+                     print(f"Notification: {data.hex()}")
+
+            await client.start_notify(NOTIFY_UUID, notification_handler)
+            
+            try:
+                # Keep running until Ctrl+C
+                while True:
+                    await asyncio.sleep(1)
+            except asyncio.CancelledError:
+                print("Stopping...")
+                
+    except Exception as e:
+        print(f"Error: {e}")
+
 def main():
-    if len(sys.argv) != 2 or sys.argv[1].lower() not in ["on", "off"]:
-        print("Usage: python control.py [on|off]")
+    if len(sys.argv) != 2:
+        print("Usage: python control.py [on|off|listen]")
         sys.exit(1)
         
-    asyncio.run(control_light(sys.argv[1].lower()))
+    cmd = sys.argv[1].lower()
+    
+    if cmd == "listen":
+        asyncio.run(listen_mode())
+    elif cmd in ["on", "off"]:
+        asyncio.run(control_light(cmd))
+    else:
+        print("Usage: python control.py [on|off|listen]")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

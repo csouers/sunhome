@@ -12,7 +12,8 @@ Initial setup and reverse engineering of the White LED On/Off command.
 [Completed] Implement toggle control.
 [Completed] Fix "Invalid Length" error in `control.py` (must suppress error).
 [Completed] Implement feedback verification via Notifications (`FFD4`).
-4. Document usage in README.
+[Completed] Add `listen` mode to monitor manual changes.
+[Completed] Document usage in README.
 
 ## Active Decisions
 - Using `bleak` for BLE interface.

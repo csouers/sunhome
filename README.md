@@ -29,6 +29,9 @@ python control.py on
 
 # Turn OFF
 python control.py off
+
+# Listen for manual changes
+python control.py listen
 ```
 
 ## Protocol Details
