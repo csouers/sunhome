@@ -28,7 +28,7 @@ This python project provides control of a Bluetooth RGB Light Bar by sun home. T
 
 ## Usage
 
-Control the main white light:
+Control the main white light and the rgb strip. Mostly works okay. Sometimes the RGB strip comes on when issuing the on/off commands. Probably just misunderstood API. Not really finished yet, tbh. :
 
 ```bash
 # Turn ON
