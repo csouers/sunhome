@@ -30,6 +30,15 @@ python control.py on
 # Turn OFF
 python control.py off
 
+# Turn RGB Strip ON
+python control.py rgb_on
+
+# Turn RGB Strip OFF
+python control.py rgb_off
+
+# Set RGB Color
+python control.py rgb 255 0 0
+
 # Listen for manual changes
 python control.py listen
 ```
@@ -42,6 +51,8 @@ python control.py listen
 |----------|--------------|
 | ON       | `CC 23 33`   |
 | OFF      | `CC 24 33`   |
+| RGB ON   | `C1 23 1C`   |
+| RGB OFF  | `C1 24 1C`   |
 
 - **Write Char**: `FFD9`
 - **Notify Char**: `FFD4`

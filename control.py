@@ -9,6 +9,8 @@ NOTIFY_UUID = "0000ffd4-0000-1000-8000-00805f9b34fb"
 # Commands
 CMD_ON = bytes.fromhex("CC 23 33")
 CMD_OFF = bytes.fromhex("CC 24 33")
+CMD_RGB_ON = bytes.fromhex("C1 23 1C")
+CMD_RGB_OFF = bytes.fromhex("C1 24 1C")
 
 async def control_light(command, rgb_values=None):
     print(f"Scanning for {TARGET_NAME}...")
@@ -37,6 +39,12 @@ async def control_light(command, rgb_values=None):
                     elif command == "off" and state_byte == 0x24:
                         print("Confirmed: Light is OFF")
                         state_verified.set()
+                    elif command == "rgb_on" and state_byte == 0x23:
+                        print("Confirmed: RGB is ON")
+                        state_verified.set()
+                    elif command == "rgb_off" and state_byte == 0x24:
+                        print("Confirmed: RGB is OFF")
+                        state_verified.set()
 
             await client.start_notify(NOTIFY_UUID, notification_handler)
             
@@ -48,6 +56,12 @@ async def control_light(command, rgb_values=None):
                 elif command == "off":
                     print("Sending OFF...")
                     await client.write_gatt_char(CMD_UUID, CMD_OFF)
+                elif command == "rgb_on":
+                    print("Sending RGB ON...")
+                    await client.write_gatt_char(CMD_UUID, CMD_RGB_ON)
+                elif command == "rgb_off":
+                    print("Sending RGB OFF...")
+                    await client.write_gatt_char(CMD_UUID, CMD_RGB_OFF)
                 elif command == "rgb" and rgb_values:
                     r, g, b = rgb_values
                     print(f"Sending RGB ({r}, {g}, {b})...")
@@ -67,8 +81,8 @@ async def control_light(command, rgb_values=None):
                     await asyncio.wait_for(state_verified.wait(), timeout=3.0)
                 except asyncio.TimeoutError:
                     print("Warning: No confirmation notification received.")
-            elif command == "rgb":
-                 # Give it a moment to send
+            elif command in ["rgb", "rgb_on", "rgb_off"]:
+                 # Give it a moment to send; these commands do not send a confirmation notification
                  await asyncio.sleep(0.5)
             
             return True
@@ -115,14 +129,14 @@ async def listen_mode():
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python control.py [on|off|listen|rgb <r> <g> <b>]")
+        print("Usage: python control.py [on|off|rgb_on|rgb_off|listen|rgb <r> <g> <b>]")
         sys.exit(1)
         
     cmd = sys.argv[1].lower()
     
     if cmd == "listen":
         asyncio.run(listen_mode())
-    elif cmd in ["on", "off"]:
+    elif cmd in ["on", "off", "rgb_on", "rgb_off"]:
         asyncio.run(control_light(cmd))
     elif cmd == "rgb":
         if len(sys.argv) != 5:
@@ -139,7 +153,7 @@ def main():
             print("Error: R, G, B values must be integers between 0 and 255.")
             sys.exit(1)
     else:
-        print("Usage: python control.py [on|off|listen|rgb <r> <g> <b>]")
+        print("Usage: python control.py [on|off|rgb_on|rgb_off|listen|rgb <r> <g> <b>]")
         sys.exit(1)
 
 if __name__ == "__main__":

@@ -9,8 +9,10 @@
     - **Notifications** (UUID `FFD4`): 12-byte status starting with `66` and ending with `99`.
         - Byte 2 (Index 2): State (`23` = ON, `24` = OFF).
     - **Commands**:
-        - `CC 23 33`: ON
-        - `CC 24 33`: OFF
+        - `CC 23 33`: Main/White ON (Returns notification `... 23 ...`)
+        - `CC 24 33`: Main/White OFF (Returns notification `... 24 ...`)
+        - `C1 23 1C`: RGB Strip ON (No notification)
+        - `C1 24 1C`: RGB Strip OFF (No notification)
         - `56 R G B F0 00 00 64 00 AA`: Set RGB Color (Length 10 bytes).
           - `R`, `G`, `B`: 0-255 (00-FF).
           - `F0` (Byte 4): RGB Mode.
