@@ -2,6 +2,11 @@
 
 # Sun Home Light Bar Control
 
+## Tools used
+- PacketLogger on MacOS via iPhone over USB with Bluetooth Debug profiles from Apple (requires dev account)
+- Cline inside VSCode
+- LLM; mostly Gemini 3 Pro Preview via openrouter. Actually economical in my opinion. Project cost was maybe a couple of dollars in compute.
+
 This python project provides control of a Bluetooth RGB Light Bar by sun home. The lightbar features two light bars, one downward/desk facing (adjustable white), and the other ceiling facing (rgb). It also features a microphone that enables sound-controlled light effects. 
 
 ## Requirements
