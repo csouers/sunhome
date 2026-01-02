@@ -29,8 +29,8 @@ async def control_light(command, rgb_values=None):
             state_verified = asyncio.Event()
 
             def notification_handler(sender, data):
-                # hex_data = data.hex()
-                # print(f"Notification: {hex_data}")
+                hex_data = data.hex()
+                print(f"Notification: {hex_data}")
                 if len(data) >= 3:
                     state_byte = data[2]
                     if command == "on" and state_byte == 0x23:
