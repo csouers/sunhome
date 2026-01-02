@@ -1,3 +1,5 @@
+# WARNING: VIBE CODED AI SLOP
+
 # Sun Home Light Bar Control
 
 This python project provides control of a Bluetooth RGB Light Bar by sun home. The lightbar features two light bars, one downward/desk facing (adjustable white), and the other ceiling facing (rgb). It also features a microphone that enables sound-controlled light effects. 
